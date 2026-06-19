@@ -10,6 +10,8 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    outputs:
+      commit_id: ${{ env.COMMIT_ID }}
 
     steps:
       - name: Checkout
@@ -39,6 +41,24 @@ jobs:
 
     steps:
 
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Modify values file
+        shell: bash
+        run: |
+          echo ${{ needs.ci.outputs.commit_id }}
+          pip install yq
+          yq -Yi '.image.tag = "${{ needs.ci.outputs.commit_id }}"' charts/python-app/values.yaml
+
+      - name: Commit values.yaml
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'charts/python-app/values.yaml'
+          message: 'Update image tag to ${{ needs.ci.outputs.commit_id }}'
+
+
       - name: Install argocd
         shell: bash
         run: |
@@ -55,5 +75,7 @@ jobs:
         shell: bash
         run: |
           argocd app sync python-app
+
+      
      
 
