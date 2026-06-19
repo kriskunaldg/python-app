@@ -41,6 +41,29 @@ jobs:
 
     steps:
 
+      - name: Debug runner image
+        run: |
+          cat /etc/os-release || true
+          which curl || true
+          which wget || true
+          which apt-get || true
+          which apk || true
+          which yum || true
+          which python || true
+          which python3 || true
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        shell: bash
+        run: |
+          curl -L \
+          https://github.com/mikefarah/yq/releases/latest/downloadyq_linux_amd64 \
+          -o yq
+          chmod +x yq
+          sudo mv yq /usr/local/bin/yq
+
 
       - name: Checkout repository
         uses: actions/checkout@v4
