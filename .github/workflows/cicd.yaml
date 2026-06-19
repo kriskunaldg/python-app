@@ -1,4 +1,4 @@
-name: ci
+name: cicd
 
 on:
   push:
@@ -30,5 +30,22 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/python-app:${{ env.COMMIT_ID }}
+  
 
+
+  cd:
+    needs: ci
+    runs-on: self-hosted
+
+    steps:
+      - name: Argocd app login
+        shell: bash
+        run: |
+          argocd login argocd-server.argocd.svc.cluster.local:443 --insecure --grpc-web --username admin --password ${{ secrets.ARGOCD_PASSWORD }}
+
+      - name: ArgoCD app sync
+        shell: bash
+        run: |
+          argocd app sync python-app
+     
 
