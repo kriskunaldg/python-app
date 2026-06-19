@@ -1,0 +1,15 @@
+# runnerdeployment.yaml
+
+cat <<< EOF | kubectl apply -n arc-systems -f -
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: self-hosted-runners
+spec:
+  # This will deploy 2 runners now
+  replicas: 2
+  template:
+    spec:
+      repository: kriskunaldg/python-app
+
+EOF
