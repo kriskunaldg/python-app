@@ -29,4 +29,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: kriskunal27/python-app:${{ env.COMMIT_ID }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/python-app:${{ env.COMMIT_ID }}
