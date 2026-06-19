@@ -16,11 +16,21 @@ def info():
         'deployed_on': 'kubernetes'
     })
 
-@app.route('/api/v1/healthz')
+@app.route('/api/v1/status')
 
 def health():
 	# Do an actual check here
     return jsonify({'status': 'up'}), 200
+
+@app.route('/api/v1/dashboard')
+
+def dashboard():
+    return "Hello World"
+
+
+@app.route("/")
+def home():
+    return "OK", 200
 
 if __name__ == '__main__':
 
