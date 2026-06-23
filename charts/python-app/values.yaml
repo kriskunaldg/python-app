@@ -59,7 +59,7 @@ ingress:
   # kubernetes.io/tls-acme: "true"
   hosts:
     - paths:
-        - host: localhost
+        - host: python-app.local
           path: /
           pathType: Prefix
   tls: []
