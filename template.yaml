@@ -36,14 +36,26 @@ spec:
 
   # ---- What happens when the form is submitted ----
   steps:
-    - id: fetch
-      name: Fetch skeleton & template it
+    - id: fetchBase
+      name: Fetch python-app repository as template
       action: fetch:template
       input:
-        url: ./skeleton              # relative to template.yaml
+        url: .
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          repoUrl: ${{ parameters.repoUrl }}
+          projectSlug: ${{ parameters.repoUrl | projectSlug }}
+          dockerNamespace: ${{ parameters.dockerNamespace }}
+          kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
+
+    - id: cleanup
+      name: Remove scaffolder-only files
+      action: fs:delete
+      input:
+        files:
+          - template.yaml
 
     - id: publish
       name: Publish to GitHub
