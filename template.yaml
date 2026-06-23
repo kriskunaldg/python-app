@@ -1,0 +1,69 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+
+kind: Template
+
+metadata:
+  name: python-app-template
+  title: Python App
+  description: Scaffold a new Python app from the python-app skeleton
+  tags: [python, recommended]
+spec:
+  owner: group:default/development      # the group you created earlier
+  type: service
+
+  # ---- The form fields shown in the UI ----
+  parameters:
+    - title: Project details
+      required: [name]
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name for the component
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+    - title: Repository location
+      required: [repoUrl]
+      properties:
+        repoUrl:
+          title: Repository
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts: [github.com]
+
+  # ---- What happens when the form is submitted ----
+  steps:
+    - id: fetch
+      name: Fetch skeleton & template it
+      action: fetch:template
+      input:
+        url: ./skeleton              # relative to template.yaml
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        description: ${{ parameters.description }}
+        defaultBranch: main
+
+    - id: register
+      name: Register in catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
